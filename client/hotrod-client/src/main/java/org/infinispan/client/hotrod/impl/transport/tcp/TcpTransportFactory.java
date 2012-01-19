@@ -22,6 +22,7 @@
  */
 package org.infinispan.client.hotrod.impl.transport.tcp;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,6 +65,7 @@ public class TcpTransportFactory implements TransportFactory {
    private GenericKeyedObjectPool connectionPool;
    private RequestBalancingStrategy balancer;
    private Collection<SocketAddress> servers;
+   private SocketAddress localAddr;
    private ConsistentHash consistentHash;
    private final ConsistentHashFactory hashFactory = new ConsistentHashFactory();
    
@@ -85,8 +87,14 @@ public class TcpTransportFactory implements TransportFactory {
          tcpNoDelay = cfg.getTcpNoDelay();
          soTimeout = cfg.getSoTimeout();
          connectTimeout = cfg.getConnectTimeout();
+         if (cfg.getLocalAddr() != null) {
+            localAddr = new InetSocketAddress(cfg.getLocalAddr(), 0);
+         }
          if (log.isDebugEnabled()) {
             log.debugf("Statically configured servers: %s", staticConfiguredServers);
+            if (localAddr != null) {
+               log.debugf("Local address: %s", localAddr);
+            }
             log.debugf("Load balancer class: %s", balancerClass);
             log.debugf("Tcp no delay = %b; client socket timeout = %d ms; connect timeout = %d ms",
                        tcpNoDelay, soTimeout, connectTimeout);
@@ -297,6 +305,11 @@ public class TcpTransportFactory implements TransportFactory {
    @Override
    public int getConnectTimeout() {
       return connectTimeout;
+   }
+
+   @Override
+   public SocketAddress getLocalAddr() {
+      return localAddr;
    }
 
    /**

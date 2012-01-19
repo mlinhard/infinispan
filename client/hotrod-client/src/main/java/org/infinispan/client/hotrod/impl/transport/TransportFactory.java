@@ -64,4 +64,6 @@ public interface TransportFactory {
 
    int getConnectTimeout();
 
+   SocketAddress getLocalAddr();
+
 }

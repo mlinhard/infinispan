@@ -57,6 +57,7 @@ public class ConfigurationProperties {
    public static final String SO_TIMEOUT = "infinispan.client.hotrod.socket_timeout";
    public static final String CONNECT_TIMEOUT = "infinispan.client.hotrod.connect_timeout";
    public static final String PROTOCOL_VERSION = "infinispan.client.hotrod.protocol_version";
+   public static final String LOCAL_ADDR = "infinispan.client.hotrod.local_addr";
 
    // defaults
 
@@ -159,6 +160,10 @@ public class ConfigurationProperties {
 
    public int getConnectTimeout() {
       return props.getIntProperty(CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT);
+   }
+
+   public String getLocalAddr() {
+      return props.getProperty(LOCAL_ADDR);
    }
 
 }
