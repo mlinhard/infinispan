@@ -275,10 +275,8 @@ public class StateProviderImpl implements StateProvider {
    @Override
    public void startOutboundTransfer(Address destination, int requestTopologyId, Set<Integer> segments)
          throws InterruptedException {
-      if (trace) {
-         log.tracef("Starting outbound transfer of segments %s to node %s with topology id %d for cache %s", segments,
-               destination, requestTopologyId, cacheName);
-      }
+      log.debugf("Starting outbound transfer of segments %s to node %s with topology id %d for cache %s", segments,
+            destination, requestTopologyId, cacheName);
 
       final CacheTopology cacheTopology = getCacheTopology(requestTopologyId, destination, false);
 
@@ -334,10 +332,8 @@ public class StateProviderImpl implements StateProvider {
    }
 
    void onTaskCompletion(OutboundTransferTask transferTask) {
-      if (trace) {
-         log.tracef("Removing %s outbound transfer of segments %s to %s for cache %s",
-               transferTask.isCancelled() ? "cancelled" : "completed", transferTask.getSegments(), transferTask.getDestination(), cacheName);
-      }
+      log.debugf("Removing %s outbound transfer of segments %s to %s for cache %s",
+            transferTask.isCancelled() ? "cancelled" : "completed", transferTask.getSegments(), transferTask.getDestination(), cacheName);
 
       removeTransfer(transferTask);
    }

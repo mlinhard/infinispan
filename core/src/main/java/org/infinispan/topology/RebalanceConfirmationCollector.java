@@ -45,7 +45,7 @@ class RebalanceConfirmationCollector {
       this.cacheName = cacheName;
       this.topologyId = topologyId;
       this.confirmationsNeeded = new HashSet<Address>(members);
-      log.tracef("Initialized rebalance confirmation collector %d@%s, initial list is %s",
+      log.debugf("Initialized rebalance confirmation collector %d@%s, initial list is %s",
             topologyId, cacheName, confirmationsNeeded);
    }
 

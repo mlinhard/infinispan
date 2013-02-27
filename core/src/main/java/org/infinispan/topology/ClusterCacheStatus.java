@@ -170,7 +170,7 @@ public class ClusterCacheStatus {
          if (newTopology.getCurrentCH() != null) {
             joiners = immutableRemoveAll(members, newTopology.getCurrentCH().getMembers());
          }
-         if (trace) log.tracef("Cache %s topology updated: members = %s, joiners = %s, topology = %s",
+         log.debugf("Cache %s topology updated: members = %s, joiners = %s, topology = %s",
                cacheName, members, joiners, cacheTopology);
       }
    }

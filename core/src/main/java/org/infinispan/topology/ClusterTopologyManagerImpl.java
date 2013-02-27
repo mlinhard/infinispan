@@ -391,7 +391,7 @@ public class ClusterTopologyManagerImpl implements ClusterTopologyManager {
             return;
          }
          CacheTopology newTopology = new CacheTopology(newTopologyId, currentCH, balancedCH);
-         log.tracef("Updating cache %s topology for rebalance: %s", cacheName, newTopology);
+         log.debugf("Updating cache %s topology for rebalance: %s", cacheName, newTopology);
          cacheStatus.startRebalance(newTopology);
       }
 
