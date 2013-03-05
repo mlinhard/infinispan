@@ -180,7 +180,11 @@ public class LocalTopologyManagerImpl implements LocalTopologyManager {
             return;
          }
 
-         log.debugf("Updating local consistent hash(es) for cache %s: new topology = %s", cacheName, cacheTopology);
+         if (trace) {
+            log.tracef("Updating local consistent hash(es) for cache %s: new topology = %s", cacheName, cacheTopology.toStringWithRoutingTable());
+         } else {
+            log.debugf("Updating local consistent hash(es) for cache %s: new topology = %s", cacheName, cacheTopology);
+         }
          cacheStatus.setTopology(cacheTopology);
          ConsistentHash unionCH = null;
          if (cacheTopology.getPendingCH() != null) {
@@ -189,9 +193,7 @@ public class LocalTopologyManagerImpl implements LocalTopologyManager {
          }
 
          CacheTopologyHandler handler = cacheStatus.getHandler();
-         CacheTopology unionTopology = new CacheTopology(cacheTopology.getTopologyId(), cacheTopology.getCurrentCH(), unionCH);
-         unionTopology.logRoutingTableInformation();
-         handler.updateConsistentHash(unionTopology);
+         handler.updateConsistentHash(new CacheTopology(cacheTopology.getTopologyId(), cacheTopology.getCurrentCH(), unionCH));
       }
    }
 
@@ -220,8 +222,11 @@ public class LocalTopologyManagerImpl implements LocalTopologyManager {
             return;
          }
 
-         log.debugf("Starting local rebalance for cache %s, topology = %s", cacheName, cacheTopology);
-         cacheTopology.logRoutingTableInformation();
+         if (trace) {
+            log.tracef("Starting local rebalance for cache %s, topology = %s", cacheName, cacheTopology.toStringWithRoutingTable());
+         } else {
+            log.debugf("Starting local rebalance for cache %s, topology = %s", cacheName, cacheTopology);
+         }
          cacheStatus.setTopology(cacheTopology);
       }
 

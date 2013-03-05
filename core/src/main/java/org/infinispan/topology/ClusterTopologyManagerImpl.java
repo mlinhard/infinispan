@@ -390,10 +390,7 @@ public class ClusterTopologyManagerImpl implements ClusterTopologyManager {
             log.tracef("The balanced CH is the same as the current CH, not rebalancing");
             return;
          }
-         CacheTopology newTopology = new CacheTopology(newTopologyId, currentCH, balancedCH);
-         log.tracef("Updating cache %s topology for rebalance: %s", cacheName, newTopology);
-         newTopology.logRoutingTableInformation();
-         cacheStatus.startRebalance(newTopology);
+         cacheStatus.startRebalance(new CacheTopology(newTopologyId, currentCH, balancedCH));
       }
 
       rebalancePolicy.updateCacheStatus(cacheName, cacheStatus);
@@ -524,8 +521,6 @@ public class ClusterTopologyManagerImpl implements ClusterTopologyManager {
          }
          CacheTopology newTopology = new CacheTopology(topologyId + 1, newCurrentCH, newPendingCH);
          cacheStatus.updateCacheTopology(newTopology);
-         log.tracef("Cache %s topology updated: %s", cacheName, newTopology);
-         newTopology.logRoutingTableInformation();
          return true;
       }
    }

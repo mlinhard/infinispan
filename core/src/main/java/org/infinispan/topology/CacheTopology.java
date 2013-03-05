@@ -12,8 +12,6 @@ import org.infinispan.marshall.AbstractExternalizer;
 import org.infinispan.marshall.Ids;
 import org.infinispan.remoting.transport.Address;
 import org.infinispan.util.InfinispanCollections;
-import org.infinispan.util.logging.Log;
-import org.infinispan.util.logging.LogFactory;
 
 /**
  * The status of a cache from a distribution/state transfer point of view.
@@ -28,9 +26,6 @@ import org.infinispan.util.logging.LogFactory;
  * @since 5.2
  */
 public class CacheTopology {
-
-   private static Log log = LogFactory.getLog(CacheTopology.class);
-   private static final boolean trace = log.isTraceEnabled();
 
    private final int topologyId;
    private final ConsistentHash currentCH;
@@ -123,13 +118,21 @@ public class CacheTopology {
             '}';
    }
 
-   public final void logRoutingTableInformation() {
-      if (trace) {
-         log.tracef("Current consistent hash's routing table: %s", currentCH.getRoutingTableAsString());
-         if (pendingCH != null) log.tracef("Pending consistent hash's routing table: %s", pendingCH.getRoutingTableAsString());
-      }
+   public String toStringWithRoutingTable() {
+      StringBuffer s = new StringBuffer("CacheTopology{");
+      s.append("id=");
+      s.append(topologyId);
+      s.append(", currentCH=");
+      s.append(currentCH);
+      s.append(", pendingCH=");
+      s.append(pendingCH);
+      s.append(", currentCHRoutingTable=");
+      s.append(currentCH == null ? "null" : currentCH.getRoutingTableAsString());
+      s.append(", pendingCHRoutingTable=");
+      s.append(pendingCH == null ? "null" : pendingCH.getRoutingTableAsString());
+      s.append("}");
+      return s.toString();
    }
-
 
    public static class Externalizer extends AbstractExternalizer<CacheTopology> {
       @Override

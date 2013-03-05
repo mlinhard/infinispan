@@ -171,7 +171,7 @@ public class ClusterCacheStatus {
             joiners = immutableRemoveAll(members, newTopology.getCurrentCH().getMembers());
          }
          if (trace) log.tracef("Cache %s topology updated: members = %s, joiners = %s, topology = %s",
-               cacheName, members, joiners, cacheTopology);
+               cacheName, members, joiners, cacheTopology.toStringWithRoutingTable());
       }
    }
 
@@ -201,6 +201,7 @@ public class ClusterCacheStatus {
          rebalanceStatus = new RebalanceConfirmationCollector(cacheName, newTopology.getTopologyId(),
                newTopology.getMembers());
          this.cacheTopology = newTopology;
+         if (trace) log.tracef("Updating cache %s topology for rebalance: %s", cacheName, newTopology.toStringWithRoutingTable());
          return true;
       }
    }

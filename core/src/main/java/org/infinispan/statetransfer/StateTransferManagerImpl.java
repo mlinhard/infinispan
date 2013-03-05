@@ -173,7 +173,7 @@ public class StateTransferManagerImpl implements StateTransferManager {
 
    private void doTopologyUpdate(CacheTopology newCacheTopology, boolean isRebalance) {
       if (trace) {
-         log.tracef("Installing new cache topology %s on cache %s", newCacheTopology, cacheName);
+         log.tracef("Installing new cache topology %s on cache %s", newCacheTopology.toStringWithRoutingTable(), cacheName);
       }
 
       // handle grouping
