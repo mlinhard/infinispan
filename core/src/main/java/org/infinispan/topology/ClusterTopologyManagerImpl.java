@@ -65,6 +65,7 @@ import static org.infinispan.factories.KnownComponentNames.ASYNC_TRANSPORT_EXECU
  */
 public class ClusterTopologyManagerImpl implements ClusterTopologyManager {
    private static Log log = LogFactory.getLog(ClusterTopologyManagerImpl.class);
+   private static final boolean trace = log.isTraceEnabled();
 
    private Transport transport;
    private RebalancePolicy rebalancePolicy;
@@ -155,8 +156,7 @@ public class ClusterTopologyManagerImpl implements ClusterTopologyManager {
             List<Address> initialMembers = cacheStatus.getMembers();
             ConsistentHash initialCH = joinInfo.getConsistentHashFactory().create(
                   joinInfo.getHashFunction(), joinInfo.getNumOwners(), joinInfo.getNumSegments(), initialMembers);
-            CacheTopology initialTopology = new CacheTopology(newTopologyId, initialCH, null);
-            cacheStatus.updateCacheTopology(initialTopology);
+            updateCacheTopology(cacheName, cacheStatus, new CacheTopology(newTopologyId, initialCH, null));
             // Don't need to broadcast the initial CH, just return the cache topology to the joiner
          } else {
             // Do nothing. The rebalance policy will trigger a rebalance later.
@@ -182,7 +182,7 @@ public class ClusterTopologyManagerImpl implements ClusterTopologyManager {
       ClusterCacheStatus cacheStatus = cacheStatusMap.get(cacheName);
       if (cacheStatus == null) {
          // This can happen if we've just become coordinator
-         log.tracef("Ignoring leave request from %s for cache %s because it doesn't have a cache status entry");
+         log.tracef("Ignoring leave request from %s for cache %s because it doesn't have a cache status entry", leaver, cacheName);
          return;
       }
       boolean actualLeaver = cacheStatus.removeMember(leaver);
@@ -312,7 +312,7 @@ public class ClusterTopologyManagerImpl implements ClusterTopologyManager {
          if (cacheStatus.isRebalanceInProgress()) {
             cacheStatus.endRebalance();
          }
-         cacheStatus.updateCacheTopology(cacheTopology);
+         updateCacheTopology(cacheName, cacheStatus, cacheTopology);
       }
 
       // End any rebalance that was running in the other partitions
@@ -373,8 +373,7 @@ public class ClusterTopologyManagerImpl implements ClusterTopologyManager {
             return;
          }
          CacheTopology newTopology = new CacheTopology(newTopologyId, currentCH, balancedCH);
-         log.tracef("Updating cache %s topology for rebalance: %s", cacheName, newTopology);
-         newTopology.logRoutingTableInformation();
+         if (trace) log.tracef("Updating cache %s topology for rebalance: %s", cacheName, newTopology.toStringWithRoutingTable());
          cacheStatus.startRebalance(newTopology);
       }
 
@@ -399,9 +398,7 @@ public class ClusterTopologyManagerImpl implements ClusterTopologyManager {
          log.debugf("Finished cluster-wide rebalance for cache %s, topology id = %d",
                cacheName, currentTopologyId);
          int newTopologyId = currentTopologyId + 1;
-         ConsistentHash newCurrentCH = currentTopology.getPendingCH();
-         CacheTopology newTopology = new CacheTopology(newTopologyId, newCurrentCH, null);
-         cacheStatus.updateCacheTopology(newTopology);
+         updateCacheTopology(cacheName, cacheStatus, new CacheTopology(newTopologyId, currentTopology.getPendingCH(), null));
          cacheStatus.endRebalance();
       }
    }
@@ -492,8 +489,7 @@ public class ClusterTopologyManagerImpl implements ClusterTopologyManager {
          List<Address> newCurrentMembers = cacheStatus.pruneInvalidMembers(currentCH.getMembers());
          if (newCurrentMembers.isEmpty()) {
             CacheTopology newTopology = new CacheTopology(topologyId + 1, null, null);
-            cacheStatus.updateCacheTopology(newTopology);
-            log.tracef("Initial topology installed for cache %s: %s", cacheName, newTopology);
+            updateCacheTopology(cacheName, cacheStatus, newTopology);
             return false;
          }
          ConsistentHash newCurrentCH = consistentHashFactory.updateMembers(currentCH, newCurrentMembers);
@@ -503,9 +499,7 @@ public class ClusterTopologyManagerImpl implements ClusterTopologyManager {
             newPendingCH = consistentHashFactory.updateMembers(pendingCH, newPendingMembers);
          }
          CacheTopology newTopology = new CacheTopology(topologyId + 1, newCurrentCH, newPendingCH);
-         cacheStatus.updateCacheTopology(newTopology);
-         log.tracef("Cache %s topology updated: %s", cacheName, newTopology);
-         newTopology.logRoutingTableInformation();
+         updateCacheTopology(cacheName, cacheStatus, newTopology);
          return true;
       }
    }
@@ -568,6 +562,14 @@ public class ClusterTopologyManagerImpl implements ClusterTopologyManager {
    private int getGlobalTimeout() {
       // TODO Rename setting to something like globalRpcTimeout
       return (int) globalConfiguration.transport().distributedSyncTimeout();
+   }
+
+   private void updateCacheTopology(String cacheName, ClusterCacheStatus cacheStatus, CacheTopology newTopology) {
+      cacheStatus.updateCacheTopology(newTopology);
+      if (trace) {
+         log.tracef("Cache %s topology updated: members = %s, joiners = %s, topology = %s",
+            cacheName, newTopology.getMembers(), newTopology.getMembers(), newTopology.toStringWithRoutingTable());
+      }
    }
 
    // need to recover existing caches asynchronously (in case we just became the coordinator)
