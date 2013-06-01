@@ -66,10 +66,10 @@ public class ActivationAndPassivationInterceptorMBeanTest extends SingleCacheMan
 
    protected EmbeddedCacheManager createCacheManager() throws Exception {
       GlobalConfigurationBuilder globalBuilder = new GlobalConfigurationBuilder();
-      globalBuilder.globalJmxStatistics()
-            .mBeanServerLookup(new PerThreadMBeanServerLookup())
-            .jmxDomain(JMX_DOMAIN)
-            .enable();
+//      globalBuilder.globalJmxStatistics()
+//            .mBeanServerLookup(new PerThreadMBeanServerLookup())
+//            .jmxDomain(JMX_DOMAIN)
+//            .enable();
 
       ConfigurationBuilder builder = new ConfigurationBuilder();
       builder.eviction().strategy(EvictionStrategy.LRU).maxEntries(1)

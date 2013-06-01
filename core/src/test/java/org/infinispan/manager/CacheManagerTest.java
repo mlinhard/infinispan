@@ -372,7 +372,7 @@ public class CacheManagerTest extends AbstractInfinispanTest {
                .cacheMode(isClustered ? CacheMode.REPL_SYNC : CacheMode.LOCAL);
 
       GlobalConfigurationBuilder gcb = new GlobalConfigurationBuilder().clusteredDefault();
-      gcb.globalJmxStatistics().allowDuplicateDomains(true);
+//      gcb.globalJmxStatistics().allowDuplicateDomains(true);
       return TestCacheManagerFactory.createClusteredCacheManager(gcb, c);
    }
 

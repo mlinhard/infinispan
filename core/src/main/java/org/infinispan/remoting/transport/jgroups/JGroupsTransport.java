@@ -31,7 +31,6 @@ import org.infinispan.configuration.global.TransportConfiguration;
 import org.infinispan.factories.GlobalComponentRegistry;
 import org.infinispan.factories.annotations.ComponentName;
 import org.infinispan.factories.annotations.Inject;
-import org.infinispan.jmx.JmxUtil;
 import org.infinispan.marshall.StreamingMarshaller;
 import org.infinispan.notifications.cachemanagerlistener.CacheManagerNotifier;
 import org.infinispan.remoting.InboundInvocationHandler;
@@ -58,16 +57,12 @@ import org.jgroups.MergeView;
 import org.jgroups.View;
 import org.jgroups.blocks.RequestOptions;
 import org.jgroups.blocks.RspFilter;
-import org.jgroups.jmx.JmxConfigurator;
 import org.jgroups.protocols.relay.SiteMaster;
 import org.jgroups.stack.AddressGenerator;
 import org.jgroups.util.Buffer;
 import org.jgroups.util.Rsp;
 import org.jgroups.util.RspList;
 import org.jgroups.util.TopologyUUID;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -122,10 +117,6 @@ public class JGroupsTransport extends AbstractTransport implements MembershipLis
    protected CacheManagerNotifier notifier;
    private GlobalComponentRegistry gcr;
    private BackupReceiverRepository backupReceiverRepository;
-
-   private boolean globalStatsEnabled;
-   private MBeanServer mbeanServer;
-   private String domain;
 
    protected Channel channel;
    protected Address address;
@@ -208,21 +199,6 @@ public class JGroupsTransport extends AbstractTransport implements MembershipLis
          } catch (Exception e) {
             throw new CacheException("Unable to start JGroups Channel", e);
          }
-
-         try {
-            // Normally this would be done by CacheManagerJmxRegistration but
-            // the channel is not started when the cache manager starts but
-            // when first cache starts, so it's safer to do it here.
-            globalStatsEnabled = configuration.globalJmxStatistics().enabled();
-            if (globalStatsEnabled) {
-               String groupName = String.format("type=channel,cluster=%s", ObjectName.quote(clusterName));
-               mbeanServer = JmxUtil.lookupMBeanServer(configuration);
-               domain = JmxUtil.buildJmxDomain(configuration, mbeanServer, groupName);
-               JmxConfigurator.registerChannel((JChannel) channel, mbeanServer, domain, clusterName, true);
-            }
-         } catch (Exception e) {
-            throw new CacheException("Channel connected, but unable to register MBeans", e);
-         }
       }
       address = fromJGroupsAddress(channel.getAddress());
       if (!startChannel) {
@@ -248,12 +224,6 @@ public class JGroupsTransport extends AbstractTransport implements MembershipLis
       try {
          if (stopChannel && channel != null && channel.isOpen()) {
             log.disconnectAndCloseJGroups();
-
-            // Unregistering before disconnecting/closing because
-            // after that the cluster name is null
-            if (globalStatsEnabled) {
-               JmxConfigurator.unregisterChannel((JChannel) channel, mbeanServer, domain, channel.getClusterName());
-            }
 
             channel.disconnect();
             channel.close();

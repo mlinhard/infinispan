@@ -98,17 +98,17 @@ public class TestCacheManagerFactory {
    }
 
    private static DefaultCacheManager newDefaultCacheManager(boolean start, GlobalConfigurationBuilder gc, ConfigurationBuilder c, boolean keepJmxDomain) {
-      if (!keepJmxDomain) {
-         gc.globalJmxStatistics().jmxDomain("infinispan-" + UUID.randomUUID());
-      }
+//      if (!keepJmxDomain) {
+//         gc.globalJmxStatistics().jmxDomain("infinispan-" + UUID.randomUUID());
+//      }
       return newDefaultCacheManager(start, gc, c);
    }
 
    private static DefaultCacheManager newDefaultCacheManager(boolean start, ConfigurationBuilderHolder holder, boolean keepJmxDomain) {
-      if (!keepJmxDomain) {
-         holder.getGlobalConfigurationBuilder().globalJmxStatistics().jmxDomain(
-               "infinispan-" + UUID.randomUUID());
-      }
+//      if (!keepJmxDomain) {
+//         holder.getGlobalConfigurationBuilder().globalJmxStatistics().jmxDomain(
+//               "infinispan-" + UUID.randomUUID());
+//      }
       return newDefaultCacheManager(start, holder);
    }
 
@@ -409,10 +409,10 @@ public class TestCacheManagerFactory {
          MBeanServerLookup mBeanServerLookup) {
       GlobalConfigurationBuilder globalBuilder = GlobalConfigurationBuilder.defaultClusteredBuilder();
       amendGlobalConfiguration(globalBuilder, new TransportFlags());
-      globalBuilder.globalJmxStatistics()
-            .jmxDomain(jmxDomain)
-            .mBeanServerLookup(mBeanServerLookup)
-            .enabled(exposeGlobalJmx);
+//      globalBuilder.globalJmxStatistics()
+//            .jmxDomain(jmxDomain)
+//            .mBeanServerLookup(mBeanServerLookup)
+//            .enabled(exposeGlobalJmx);
       return createCacheManager(globalBuilder, builder, true);
    }
 

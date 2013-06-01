@@ -54,7 +54,6 @@ import org.infinispan.eviction.EvictionThreadPolicy;
 import org.infinispan.executors.ExecutorFactory;
 import org.infinispan.executors.ScheduledExecutorFactory;
 import org.infinispan.interceptors.base.CommandInterceptor;
-import org.infinispan.jmx.MBeanServerLookup;
 import org.infinispan.loaders.CacheLoader;
 import org.infinispan.loaders.CacheStore;
 import org.infinispan.loaders.cluster.ClusterCacheLoader;
@@ -1170,10 +1169,6 @@ public class Parser51 implements ConfigurationParser<ConfigurationBuilderHolder>
                parseEvictionScheduledExecutor(reader, builder, cl);
                break;
             }
-            case GLOBAL_JMX_STATISTICS: {
-               parseGlobalJMXStatistics(reader, builder, cl);
-               break;
-            }
             case REPLICATION_QUEUE_SCHEDULED_EXECUTOR: {
                parseReplicationQueueScheduledExecutor(reader, builder, cl);
                break;
@@ -1390,58 +1385,6 @@ public class Parser51 implements ConfigurationParser<ConfigurationBuilderHolder>
          switch (element) {
             case PROPERTIES: {
                builder.replicationQueueScheduledExecutor().withProperties(parseProperties(reader));
-               break;
-            }
-            default: {
-               throw ParseUtils.unexpectedElement(reader);
-            }
-         }
-      }
-   }
-
-   private void parseGlobalJMXStatistics(XMLStreamReader reader, GlobalConfigurationBuilder builder, ClassLoader cl)
-         throws XMLStreamException {
-      for (int i = 0; i < reader.getAttributeCount(); i++) {
-         ParseUtils.requireNoNamespaceAttribute(reader, i);
-         String value = replaceProperties(reader.getAttributeValue(i));
-         Attribute attribute = Attribute.forName(reader.getAttributeLocalName(i));
-         // allowDuplicateDomains="true" cacheManagerName="" enabled="true" jmxDomain=""
-         // mBeanServerLookup
-         switch (attribute) {
-            case ALLOW_DUPLICATE_DOMAINS: {
-               builder.globalJmxStatistics().allowDuplicateDomains(Boolean.valueOf(value));
-               break;
-            }
-            case CACHE_MANAGER_NAME: {
-               builder.globalJmxStatistics().cacheManagerName(value);
-               break;
-            }
-            case ENABLED: {
-               if (!Boolean.parseBoolean(value))
-                  builder.globalJmxStatistics().disable();
-               else
-                  builder.globalJmxStatistics().enable();
-               break;
-            }
-            case JMX_DOMAIN: {
-               builder.globalJmxStatistics().jmxDomain(value);
-               break;
-            }
-            case MBEAN_SERVER_LOOKUP: {
-               builder.globalJmxStatistics().mBeanServerLookup(Util.<MBeanServerLookup> getInstance(value, cl));
-               break;
-            }
-            default: {
-               throw ParseUtils.unexpectedAttribute(reader, i);
-            }
-         }
-      }
-
-      while (reader.hasNext() && (reader.nextTag() != XMLStreamConstants.END_ELEMENT)) {
-         Element element = Element.forName(reader.getLocalName());
-         switch (element) {
-            case PROPERTIES: {
-               builder.globalJmxStatistics().withProperties(parseProperties(reader));
                break;
             }
             default: {

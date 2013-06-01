@@ -1311,7 +1311,10 @@
             <configuration>
                <instructions>
                   <Bundle-DocURL>http://www.infinispan.org/</Bundle-DocURL>
-                  <Export-Package>${project.groupId}.*;version=${project.version};-split-package:=error</Export-Package>
+                  <Export-Package>
+!org.infinispan.jmx.*,
+${project.groupId}.*;version=${project.version};-split-package:=error
+                  </Export-Package>
                </instructions>
             </configuration>
          </plugin>
@@ -1403,7 +1406,9 @@
                   <exclude>**/*.bat</exclude>
                   <exclude>**/*.sh</exclude>
                   <exclude>**/*.txt</exclude>
-               </excludes>
+	              <exclude>org/infinispan/jmx/**/*</exclude>                  
+	              <exclude>org/infinispan/jmx</exclude>                  
+	              </excludes>
             </configuration>
          </plugin>
          <plugin>

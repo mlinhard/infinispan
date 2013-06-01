@@ -56,17 +56,6 @@ public class LegacyGlobalConfigurationAdaptor {
       if (config.transport().transport() != null)
          legacy.transport().transportClass(config.transport().transport().getClass());
 
-      // Implicitly enables stats
-      legacy.globalJmxStatistics()
-            .jmxDomain(config.globalJmxStatistics().domain())
-            .mBeanServerLookup(config.globalJmxStatistics().mbeanServerLookup())
-            .allowDuplicateDomains(config.globalJmxStatistics().allowDuplicateDomains())
-            .cacheManagerName(config.globalJmxStatistics().cacheManagerName())
-            .withProperties(config.globalJmxStatistics().properties());
-
-      if (!config.globalJmxStatistics().enabled())
-         legacy.globalJmxStatistics().disable();
-
       legacy.serialization()
          .marshallerClass(config.serialization().marshaller().getClass())
          .version(config.serialization().version());
@@ -118,18 +107,6 @@ public class LegacyGlobalConfigurationAdaptor {
             .nodeName(legacy.getTransportNodeName())
             .withProperties(legacy.getTransportProperties());
       }
-
-      builder.globalJmxStatistics()
-            .jmxDomain(legacy.getJmxDomain())
-            .mBeanServerLookup(legacy.getMBeanServerLookupInstance())
-            .allowDuplicateDomains(legacy.isAllowDuplicateDomains())
-            .cacheManagerName(legacy.getCacheManagerName())
-            .withProperties(legacy.getMBeanServerProperties());
-
-      if (legacy.isExposeGlobalJmxStatistics())
-         builder.globalJmxStatistics().enable();
-      else
-         builder.globalJmxStatistics().disable();
 
       builder.serialization()
          .marshaller(Util.<Marshaller>getInstance(legacy.getMarshallerClass(), legacy.getClassLoader()))

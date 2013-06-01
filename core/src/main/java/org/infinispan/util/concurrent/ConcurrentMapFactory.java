@@ -19,8 +19,6 @@
 
 package org.infinispan.util.concurrent;
 
-import org.infinispan.util.concurrent.jdk8backported.ConcurrentHashMapV8;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -32,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class ConcurrentMapFactory {
    
-   private static final ConcurrentMapCreator MAP_CREATOR;
+   private static final ConcurrentMapCreator MAP_CREATOR = new JdkConcurrentMapCreator();
 
    private static interface ConcurrentMapCreator {
       <K, V> ConcurrentMap<K, V> createConcurrentMap();
@@ -62,54 +60,6 @@ public class ConcurrentMapFactory {
       public <K, V> ConcurrentMap<K, V> createConcurrentMap(int initialCapacity, float loadFactor, int concurrencyLevel) {
          return new ConcurrentHashMap<K, V>(initialCapacity, loadFactor, concurrencyLevel);
       }
-   }
-
-   private static class BackportedV8ConcurrentMapCreator implements ConcurrentMapCreator {
-
-      @Override
-      public <K, V> ConcurrentMap<K, V> createConcurrentMap() {
-         return new ConcurrentHashMapV8<K, V>();
-      }
-
-      @Override
-      public <K, V> ConcurrentMap<K, V> createConcurrentMap(int initialCapacity) {
-         return new ConcurrentHashMapV8<K, V>(initialCapacity);
-      }
-
-      @Override
-      public <K, V> ConcurrentMap<K, V> createConcurrentMap(int initialCapacity, int concurrencyLevel) {
-         return new ConcurrentHashMapV8<K, V>(initialCapacity, 0.75f, concurrencyLevel);
-      }
-
-      @Override
-      public <K, V> ConcurrentMap<K, V> createConcurrentMap(int initialCapacity, float loadFactor, int concurrencyLevel) {
-         return new ConcurrentHashMapV8<K, V>(initialCapacity, loadFactor, concurrencyLevel);
-      }
-   }
-   
-   static {
-      boolean sunIncompatibleJvm;
-      boolean jdk8;
-      boolean allowExperimentalMap = Boolean.getBoolean("infinispan.unsafe.allow_jdk8_chm");
-
-      try {
-         Class.forName("sun.misc.Unsafe");
-         sunIncompatibleJvm = false;
-      } catch (ClassNotFoundException e) {
-         sunIncompatibleJvm = true;
-      }
-      
-      try {
-         Class.forName("java.util.concurrent.atomic.LongAdder");
-         jdk8 = true;
-      } catch (ClassNotFoundException e) {
-         jdk8 = false;
-      }
-
-      if (jdk8 || sunIncompatibleJvm || !allowExperimentalMap)
-         MAP_CREATOR = new JdkConcurrentMapCreator();
-      else
-         MAP_CREATOR = new BackportedV8ConcurrentMapCreator();
    }
    
    public static <K, V> ConcurrentMap<K, V> makeConcurrentMap() {

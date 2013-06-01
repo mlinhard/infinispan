@@ -28,9 +28,6 @@ import org.infinispan.factories.annotations.SurvivesRestarts;
 import org.infinispan.factories.scopes.Scope;
 import org.infinispan.factories.scopes.ScopeDetector;
 import org.infinispan.factories.scopes.Scopes;
-import org.infinispan.jmx.annotations.MBean;
-import org.infinispan.jmx.annotations.ManagedAttribute;
-import org.infinispan.jmx.annotations.ManagedOperation;
 import org.infinispan.util.ReflectionUtil;
 import org.infinispan.util.Util;
 
@@ -39,7 +36,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -147,7 +143,6 @@ public class ComponentMetadataPersister extends ComponentMetadataRepo {
 
    private static void processClass(Class<?> clazz, String className) {
       // Look for a @MBean annotation first.
-      MBean mbean = ReflectionUtil.getAnnotation(clazz, MBean.class);
       boolean survivesRestarts;
       boolean isGlobal;
       // Could still be a valid component.
@@ -160,14 +155,7 @@ public class ComponentMetadataPersister extends ComponentMetadataRepo {
 
       ComponentMetadata metadata = null;
 
-      if (mbean != null) {
-         List<Method> managedAttributeMethods = ReflectionUtil.getAllMethods(clazz, ManagedAttribute.class);
-         List<Field> managedAttributeFields = ReflectionUtil.getAnnotatedFields(clazz, ManagedAttribute.class);
-         List<Method> managedOperationMethods = ReflectionUtil.getAllMethods(clazz, ManagedOperation.class);
-         metadata = new ManageableComponentMetadata(clazz, injectMethods, startMethods, stopMethods, isGlobal,
-                                                    survivesRestarts, managedAttributeFields, managedAttributeMethods,
-                                                    managedOperationMethods, mbean);
-      } else if (!injectMethods.isEmpty() || !startMethods.isEmpty() || !stopMethods.isEmpty()
+      if (!injectMethods.isEmpty() || !startMethods.isEmpty() || !stopMethods.isEmpty()
             || isGlobal || survivesRestarts || ReflectionUtil.isAnnotationPresent(clazz, Scope.class)) {
          // Then this still is a component!
          metadata = new ComponentMetadata(clazz, injectMethods, startMethods, stopMethods, isGlobal, survivesRestarts);
@@ -181,7 +169,8 @@ public class ComponentMetadataPersister extends ComponentMetadataRepo {
       DefaultFactoryFor dff = ReflectionUtil.getAnnotation(clazz, DefaultFactoryFor.class);
 
       if (dff != null) {
-         for (Class<?> target : dff.classes()) repo.factories.put(target.getName(), className);
+         for (Class<?> target : dff.classes())
+            repo.factories.put(Util.changeJavaxPackageName(target.getName()), className);
       }
    }
 

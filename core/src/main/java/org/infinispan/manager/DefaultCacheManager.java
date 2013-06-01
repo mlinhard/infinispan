@@ -41,8 +41,6 @@ import org.infinispan.factories.InternalCacheFactory;
 import org.infinispan.factories.annotations.SurvivesRestarts;
 import org.infinispan.factories.scopes.Scope;
 import org.infinispan.factories.scopes.Scopes;
-import org.infinispan.jmx.CacheJmxRegistration;
-import org.infinispan.jmx.CacheManagerJmxRegistration;
 import org.infinispan.jmx.annotations.DataType;
 import org.infinispan.jmx.annotations.DisplayType;
 import org.infinispan.jmx.annotations.MBean;
@@ -705,7 +703,7 @@ public class DefaultCacheManager implements EmbeddedCacheManager, CacheManager {
 
    @Override
    public void start() {
-      globalComponentRegistry.getComponent(CacheManagerJmxRegistration.class).start();
+      //globalComponentRegistry.getComponent(CacheManagerJmxRegistration.class).start();
       String clusterName = globalConfiguration.transport().clusterName();
       String nodeName = globalConfiguration.transport().nodeName();
       log.debugf("Started cache manager %s on %s", clusterName, nodeName);
@@ -728,17 +726,15 @@ public class DefaultCacheManager implements EmbeddedCacheManager, CacheManager {
                   } else {
                      Cache<?, ?> c = entry.getValue().cache;
                      if (c != null) {
-                        unregisterCacheMBean(c);
                         c.stop();
                      }
                   }
                }
 
                if (defaultCache != null) {
-                  unregisterCacheMBean(defaultCache);
                   defaultCache.stop();
                }
-               globalComponentRegistry.getComponent(CacheManagerJmxRegistration.class).stop();
+               //globalComponentRegistry.getComponent(CacheManagerJmxRegistration.class).stop();
                globalComponentRegistry.stop();
 
             } else {
@@ -748,12 +744,6 @@ public class DefaultCacheManager implements EmbeddedCacheManager, CacheManager {
       } else {
          log.trace("Ignore call to stop as the cache manager is stopping");
       }
-   }
-
-   private void unregisterCacheMBean(Cache<?, ?> cache) {
-      // Unregister cache mbean regardless of jmx statistics setting
-      cache.getAdvancedCache().getComponentRegistry().getComponent(CacheJmxRegistration.class)
-              .unregisterCacheMBean();
    }
 
    @Override
@@ -877,7 +867,7 @@ public class DefaultCacheManager implements EmbeddedCacheManager, CacheManager {
 
    @ManagedAttribute(description = "The name of this cache manager", displayName = "Cache manager name", displayType = DisplayType.SUMMARY, dataType = DataType.TRAIT)
    public String getName() {
-      return globalConfiguration.globalJmxStatistics().cacheManagerName();
+      throw new UnsupportedOperationException();
    }
 
    @ManagedOperation(description = "Starts the default cache associated with this cache manager", displayName = "Starts the default cache")

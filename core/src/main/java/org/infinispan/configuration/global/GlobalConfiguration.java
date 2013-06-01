@@ -61,7 +61,6 @@ public class GlobalConfiguration {
    private final ExecutorFactoryConfiguration asyncTransportExecutor;
    private final ScheduledExecutorFactoryConfiguration evictionScheduledExecutor;
    private final ScheduledExecutorFactoryConfiguration replicationQueueScheduledExecutor;
-   private final GlobalJmxStatisticsConfiguration globalJmxStatistics;
    private final TransportConfiguration transport;
    private final SerializationConfiguration serialization;
    private final ShutdownConfiguration shutdown;
@@ -71,14 +70,13 @@ public class GlobalConfiguration {
 
    GlobalConfiguration(ExecutorFactoryConfiguration asyncListenerExecutor,
          ExecutorFactoryConfiguration asyncTransportExecutor, ScheduledExecutorFactoryConfiguration evictionScheduledExecutor,
-         ScheduledExecutorFactoryConfiguration replicationQueueScheduledExecutor, GlobalJmxStatisticsConfiguration globalJmxStatistics,
+         ScheduledExecutorFactoryConfiguration replicationQueueScheduledExecutor,
          TransportConfiguration transport, SerializationConfiguration serialization, ShutdownConfiguration shutdown,
          List<?> modules, SiteConfiguration site,ClassLoader cl) {
       this.asyncListenerExecutor = asyncListenerExecutor;
       this.asyncTransportExecutor = asyncTransportExecutor;
       this.evictionScheduledExecutor = evictionScheduledExecutor;
       this.replicationQueueScheduledExecutor = replicationQueueScheduledExecutor;
-      this.globalJmxStatistics = globalJmxStatistics;
       this.transport = transport;
       this.serialization = serialization;
       this.shutdown = shutdown;
@@ -105,10 +103,6 @@ public class GlobalConfiguration {
 
    public ScheduledExecutorFactoryConfiguration replicationQueueScheduledExecutor() {
       return replicationQueueScheduledExecutor;
-   }
-
-   public GlobalJmxStatisticsConfiguration globalJmxStatistics() {
-      return globalJmxStatistics;
    }
 
    public TransportConfiguration transport() {
@@ -150,7 +144,6 @@ public class GlobalConfiguration {
             ", asyncTransportExecutor=" + asyncTransportExecutor +
             ", evictionScheduledExecutor=" + evictionScheduledExecutor +
             ", replicationQueueScheduledExecutor=" + replicationQueueScheduledExecutor +
-            ", globalJmxStatistics=" + globalJmxStatistics +
             ", transport=" + transport +
             ", serialization=" + serialization +
             ", shutdown=" + shutdown +

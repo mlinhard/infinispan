@@ -37,7 +37,6 @@ public class GlobalConfigurationBuilder implements GlobalConfigurationChildBuild
 
    private ClassLoader cl;
    private final TransportConfigurationBuilder transport;
-   private final GlobalJmxStatisticsConfigurationBuilder globalJmxStatistics;
    private final SerializationConfigurationBuilder serialization;
    private final ExecutorFactoryConfigurationBuilder asyncTransportExecutor;
    private final ExecutorFactoryConfigurationBuilder asyncListenerExecutor;
@@ -50,7 +49,6 @@ public class GlobalConfigurationBuilder implements GlobalConfigurationChildBuild
    public GlobalConfigurationBuilder() {
       this.cl = Thread.currentThread().getContextClassLoader();
       this.transport = new TransportConfigurationBuilder(this);
-      this.globalJmxStatistics = new GlobalJmxStatisticsConfigurationBuilder(this);
       this.serialization = new SerializationConfigurationBuilder(this);
       this.asyncListenerExecutor = new ExecutorFactoryConfigurationBuilder(this);
       this.asyncTransportExecutor = new ExecutorFactoryConfigurationBuilder(this);
@@ -99,15 +97,6 @@ public class GlobalConfigurationBuilder implements GlobalConfigurationChildBuild
    @Override
    public TransportConfigurationBuilder transport() {
       return transport;
-   }
-
-   /**
-    * This method allows configuration of the global, or cache manager level,
-    * jmx statistics.
-    */
-   @Override
-   public GlobalJmxStatisticsConfigurationBuilder globalJmxStatistics() {
-      return globalJmxStatistics;
    }
 
    @Override
@@ -168,7 +157,7 @@ public class GlobalConfigurationBuilder implements GlobalConfigurationChildBuild
    @SuppressWarnings("unchecked")
    public void validate() {
       for (AbstractGlobalConfigurationBuilder<?> validatable : asList(asyncListenerExecutor, asyncTransportExecutor,
-            evictionScheduledExecutor, replicationQueueScheduledExecutor, globalJmxStatistics, transport,
+            evictionScheduledExecutor, replicationQueueScheduledExecutor, transport,
             serialization, shutdown, site)) {
          validatable.validate();
       }
@@ -188,7 +177,6 @@ public class GlobalConfigurationBuilder implements GlobalConfigurationChildBuild
             asyncTransportExecutor.create(),
             evictionScheduledExecutor.create(),
             replicationQueueScheduledExecutor.create(),
-            globalJmxStatistics.create(),
             transport.create(),
             serialization.create(),
             shutdown.create(),
@@ -210,7 +198,6 @@ public class GlobalConfigurationBuilder implements GlobalConfigurationChildBuild
       asyncListenerExecutor.read(template.asyncListenerExecutor());
       asyncTransportExecutor.read(template.asyncTransportExecutor());
       evictionScheduledExecutor.read(template.evictionScheduledExecutor());
-      globalJmxStatistics.read(template.globalJmxStatistics());
       replicationQueueScheduledExecutor.read(template.replicationQueueScheduledExecutor());
       serialization.read(template.serialization());
       shutdown.read(template.shutdown());
@@ -236,7 +223,6 @@ public class GlobalConfigurationBuilder implements GlobalConfigurationChildBuild
             "asyncListenerExecutor=" + asyncListenerExecutor +
             ", cl=" + cl +
             ", transport=" + transport +
-            ", globalJmxStatistics=" + globalJmxStatistics +
             ", serialization=" + serialization +
             ", asyncTransportExecutor=" + asyncTransportExecutor +
             ", evictionScheduledExecutor=" + evictionScheduledExecutor +
@@ -260,8 +246,6 @@ public class GlobalConfigurationBuilder implements GlobalConfigurationChildBuild
       if (cl != null ? !cl.equals(that.cl) : that.cl != null) return false;
       if (evictionScheduledExecutor != null ? !evictionScheduledExecutor.equals(that.evictionScheduledExecutor) : that.evictionScheduledExecutor != null)
          return false;
-      if (globalJmxStatistics != null ? !globalJmxStatistics.equals(that.globalJmxStatistics) : that.globalJmxStatistics != null)
-         return false;
       if (replicationQueueScheduledExecutor != null ? !replicationQueueScheduledExecutor.equals(that.replicationQueueScheduledExecutor) : that.replicationQueueScheduledExecutor != null)
          return false;
       if (serialization != null ? !serialization.equals(that.serialization) : that.serialization != null)
@@ -280,7 +264,6 @@ public class GlobalConfigurationBuilder implements GlobalConfigurationChildBuild
    public int hashCode() {
       int result = cl != null ? cl.hashCode() : 0;
       result = 31 * result + (transport != null ? transport.hashCode() : 0);
-      result = 31 * result + (globalJmxStatistics != null ? globalJmxStatistics.hashCode() : 0);
       result = 31 * result + (serialization != null ? serialization.hashCode() : 0);
       result = 31 * result + (asyncTransportExecutor != null ? asyncTransportExecutor.hashCode() : 0);
       result = 31 * result + (asyncListenerExecutor != null ? asyncListenerExecutor.hashCode() : 0);

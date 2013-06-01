@@ -21,8 +21,6 @@ package org.infinispan.configuration.global;
 public interface GlobalConfigurationChildBuilder {
    TransportConfigurationBuilder transport();
 
-   GlobalJmxStatisticsConfigurationBuilder globalJmxStatistics();
-
    SerializationConfigurationBuilder serialization();
 
    ExecutorFactoryConfigurationBuilder asyncListenerExecutor();

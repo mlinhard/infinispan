@@ -110,22 +110,25 @@ public class GenericTransactionManagerLookup implements TransactionManagerLookup
     */
    @Override
    public synchronized TransactionManager getTransactionManager() {
-      if (!lookupDone) {
-         doLookups(configuration.classLoader());
-      }
-      if (tm != null)
-         return tm;
-      if (lookupFailed) {
-         if (!noJBossTM) {
-            // First try an embedded JBossTM instance
-            tryEmbeddedJBossTM();
-         }
-
-         if (noJBossTM) {
-            //fall back to a dummy from Infinispan
-            useDummyTM();
-         }
-      }
+      //TODO allow other lookups !
+      
+//      if (!lookupDone) {
+//         doLookups(configuration.classLoader());
+//      }
+//      if (tm != null)
+//         return tm;
+//      if (lookupFailed) {
+//         if (!noJBossTM) {
+//            // First try an embedded JBossTM instance
+//            tryEmbeddedJBossTM();
+//         }
+//
+//         if (noJBossTM) {
+//            //fall back to a dummy from Infinispan
+//            useDummyTM();
+//         }
+//      }
+      useDummyTM();
       return tm;
    }
    

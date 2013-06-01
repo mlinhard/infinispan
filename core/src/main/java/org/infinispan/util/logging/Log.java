@@ -43,9 +43,6 @@ import org.jboss.logging.Message;
 import org.jboss.logging.MessageLogger;
 import org.jgroups.View;
 
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.ObjectName;
 import javax.naming.NamingException;
 import javax.transaction.Synchronization;
 import javax.transaction.TransactionManager;
@@ -187,7 +184,7 @@ public interface Log extends BasicLogger {
 
    @LogMessage(level = WARN)
    @Message(value = "Unable to unregister Cache MBeans with pattern %s", id = 33)
-   void unableToUnregisterMBeanWithPattern(String pattern, @Cause MBeanRegistrationException e);
+   void unableToUnregisterMBeanWithPattern(String pattern, @Cause Exception e);
 
    @LogMessage(level = ERROR)
    @Message(value = "There's already an cache manager instance registered under " +
@@ -576,7 +573,7 @@ public interface Log extends BasicLogger {
 
    @LogMessage(level = INFO)
    @Message(value = "Could not register object with name: %s", id = 138)
-   void couldNotRegisterObjectName(ObjectName objectName, @Cause InstanceAlreadyExistsException e);
+   void couldNotRegisterObjectName(Object objectName, @Cause Exception e);
 
    @LogMessage(level = WARN)
    @Message(value = "Infinispan configuration schema could not be resolved locally nor fetched from URL. Local path=%s, schema path=%s, schema URL=%s", id = 139)

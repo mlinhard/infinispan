@@ -36,12 +36,6 @@ abstract class AbstractGlobalConfigurationBuilder<T> implements GlobalConfigurat
    }
 
    @Override
-   public GlobalJmxStatisticsConfigurationBuilder globalJmxStatistics() {
-      globalConfig.globalJmxStatistics().enable();
-      return globalConfig.globalJmxStatistics();
-   }
-
-   @Override
    public SerializationConfigurationBuilder serialization() {
       return globalConfig.serialization();
    }

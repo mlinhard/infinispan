@@ -34,7 +34,7 @@
    </parent>
 
    <artifactId>infinispan-core</artifactId>
-   <packaging>bundle</packaging>
+   <packaging>jar</packaging>
    <name>Infinispan Core</name>
    <description>Infinispan core module</description>
 
@@ -237,8 +237,9 @@
                </arguments>
             </configuration>
          </plugin>
-            </plugins>
+         </plugins>
          </build>
       </profile>
    </profiles>
+   <version>5.2.6-android-SNAPSHOT</version>
 </project>

@@ -385,10 +385,10 @@ public class XmlFileParsingTest extends AbstractInfinispanTest {
 
       c = cm.getCacheConfiguration("withouthJmxEnabled");
       assert !c.jmxStatistics().enabled();
-      assert gc.globalJmxStatistics().enabled();
-      assert gc.globalJmxStatistics().allowDuplicateDomains();
-      assertEquals("funky_domain", gc.globalJmxStatistics().domain());
-      assert gc.globalJmxStatistics().mbeanServerLookup() instanceof PerThreadMBeanServerLookup;
+//      assert gc.globalJmxStatistics().enabled();
+//      assert gc.globalJmxStatistics().allowDuplicateDomains();
+//      assertEquals("funky_domain", gc.globalJmxStatistics().domain());
+//      assert gc.globalJmxStatistics().mbeanServerLookup() instanceof PerThreadMBeanServerLookup;
 
       c = cm.getCacheConfiguration("dist");
       assert c.clustering().cacheMode() == CacheMode.DIST_SYNC;

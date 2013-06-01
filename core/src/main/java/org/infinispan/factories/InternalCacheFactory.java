@@ -27,7 +27,6 @@ import org.infinispan.Cache;
 import org.infinispan.CacheImpl;
 import org.infinispan.config.ConfigurationException;
 import org.infinispan.configuration.cache.Configuration;
-import org.infinispan.jmx.CacheJmxRegistration;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.upgrade.RollingUpgradeManager;
 import org.infinispan.transaction.xa.recovery.RecoveryAdminOperations;
@@ -99,7 +98,6 @@ public class InternalCacheFactory<K, V> extends AbstractNamedCacheComponentFacto
          --------------------------------------------------------------------------------------------------------------
        */
       componentRegistry.registerComponent(cache, Cache.class.getName(), true);
-      componentRegistry.registerComponent(new CacheJmxRegistration(), CacheJmxRegistration.class.getName(), true);
       if (configuration.transaction().transactionMode().isTransactional() && configuration.transaction().recovery().enabled()) {
          componentRegistry.registerComponent(new RecoveryAdminOperations(), RecoveryAdminOperations.class.getName(), true);
       }

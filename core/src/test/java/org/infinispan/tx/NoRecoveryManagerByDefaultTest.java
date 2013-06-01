@@ -41,8 +41,8 @@ import static org.infinispan.test.TestingUtil.getCacheObjectName;
 public class NoRecoveryManagerByDefaultTest extends SingleCacheManagerTest {
    public void testNoRecoveryManager() throws Exception {
       assert cache.getCacheConfiguration().transaction().transactionMode().isTransactional();
-      String jmxDomain = cacheManager.getCacheManagerConfiguration().globalJmxStatistics().domain();
-      assert !existsObject(getCacheObjectName(jmxDomain, cache.getName(), "RecoveryManager"));
+//      String jmxDomain = cacheManager.getCacheManagerConfiguration().globalJmxStatistics().domain();
+//      assert !existsObject(getCacheObjectName(jmxDomain, cache.getName(), "RecoveryManager"));
    }
 
    @Override
